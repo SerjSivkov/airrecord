@@ -19,11 +19,25 @@ module Airrecord
     end
 
     def self.api_uri
-      @api_uri || URI.parse("https://api.airtable.com")
+      if Airrecord.respond_to?(:api_uri) && Airrecord.api_uri
+        uri = Airrecord.api_uri
+        uri.is_a?(URI) ? uri : URI.parse(uri.to_s)
+      else
+        @api_uri || URI.parse("https://api.airtable.com")
+      end
     end
 
     def connection
-      @connection ||= Faraday.new(
+      # Don't cache connection when using Airrecord.api_uri so that changing it takes effect
+      if Airrecord.respond_to?(:api_uri) && Airrecord.api_uri
+        build_connection
+      else
+        @connection ||= build_connection
+      end
+    end
+
+    def build_connection
+      Faraday.new(
         url: self.class.api_uri,
         headers: {
           "Authorization" => "Bearer #{api_key}",
