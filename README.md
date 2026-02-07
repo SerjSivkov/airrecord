@@ -112,6 +112,22 @@ You can provide a global PAT with:
 Airrecord.api_key = "your PAT"
 ```
 
+#### Custom API endpoint
+
+By default, Airrecord uses `https://api.airtable.com`. You can point all requests to a different base URL (e.g. a proxy or a self-hosted compatible API):
+
+```ruby
+Airrecord.api_uri = "https://your-proxy.example.com"
+```
+
+Tables and ad-hoc clients will use this URL when creating HTTP connections. You can also pass `api_uri` when instantiating a client directly:
+
+```ruby
+client = Airrecord::Client.new("your_api_key", api_uri: "https://custom.api.com")
+```
+
+If `api_uri` is not set, `https://api.airtable.com` is used.
+
 ### Table
 
 The Airrecord API is centered around definitions of `Airrecord::Table` from
