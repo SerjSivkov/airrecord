@@ -44,7 +44,7 @@ module Airrecord
         if response.success?
           self.new(parsed_response["fields"], id: id, created_at: parsed_response["createdTime"])
         else
-          client.handle_error(response.status, parsed_response)
+          client.handle_error(response.status, parsed_response, body: response.body)
         end
       end
 
@@ -69,7 +69,7 @@ module Airrecord
         if response.success?
           parsed_response["fields"]
         else
-          client.handle_error(response.status, parsed_response)
+          client.handle_error(response.status, parsed_response, body: response.body)
         end
       end
 
@@ -118,7 +118,7 @@ module Airrecord
 
           records
         else
-          client.handle_error(response.status, parsed_response)
+          client.handle_error(response.status, parsed_response, body: response.body)
         end
       end
       alias all records
@@ -175,7 +175,7 @@ module Airrecord
         self.created_at = parsed_response["createdTime"]
         self.fields = parsed_response["fields"]
       else
-        client.handle_error(response.status, parsed_response)
+        client.handle_error(response.status, parsed_response, body: response.body)
       end
     end
 
@@ -199,7 +199,7 @@ module Airrecord
       if response.success?
         true
       else
-        client.handle_error(response.status, parsed_response)
+        client.handle_error(response.status, parsed_response, body: response.body)
       end
     end
 

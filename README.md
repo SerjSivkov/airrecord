@@ -112,6 +112,18 @@ You can provide a global PAT with:
 Airrecord.api_key = "your PAT"
 ```
 
+### Custom API endpoint
+
+By default requests go to `https://api.airtable.com`. To use a different base URL (e.g. a proxy or self-hosted API):
+
+```ruby
+Airrecord.api_uri = "https://your-api.example.com"
+```
+
+Set this before any table requests. You can also use `Airrecord::Client.api_uri = "..."` for the same effect.
+
+If you get **HTTP 405 (Method Not Allowed)**, the custom server must allow the same methods as Airtable: GET (fetch one), POST (list records, create), PATCH (update), DELETE (destroy). Proxies that only allow GET will return 405 for listing and creating records.
+
 ### Table
 
 The Airrecord API is centered around definitions of `Airrecord::Table` from
