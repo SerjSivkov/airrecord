@@ -3,28 +3,23 @@ require 'erb'
 
 module Airrecord
   class Client
-    attr_reader :api_key
+    DEFAULT_API_URI = "https://api.airtable.com"
+
+    attr_reader :api_key, :api_uri
     attr_writer :connection
 
     # Per Airtable's documentation you will get throttled for 30 seconds if you
     # issue more than 5 requests per second. Airrecord is a good citizen.
     AIRTABLE_RPS_LIMIT = 5
 
-    def initialize(api_key)
+    def initialize(api_key:, api_uri: nil)
       @api_key = api_key
-    end
-
-    def self.api_uri=(uri)
-      @api_uri = URI.parse(uri)
-    end
-
-    def self.api_uri
-      @api_uri || URI.parse("https://api.airtable.com")
+      @api_uri = parse_api_uri(api_uri)
     end
 
     def connection
       @connection ||= Faraday.new(
-        url: self.class.api_uri,
+        url: api_uri,
         headers: {
           "Authorization" => "Bearer #{api_key}",
           "User-Agent"    => "Airrecord/#{Airrecord::VERSION}",
@@ -53,6 +48,13 @@ module Airrecord
       else
         raise Error, "HTTP #{status}: Communication error: #{error}"
       end
+    end
+
+    private
+
+    def parse_api_uri(uri)
+      base = uri || DEFAULT_API_URI
+      base.is_a?(URI::Generic) ? base : URI.parse(base.to_s)
     end
   end
 end
